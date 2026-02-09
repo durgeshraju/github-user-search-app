@@ -2,13 +2,13 @@
 
 // Button that toggles the theme
 const themeToggle = document.querySelector('[data-theme-toggle]');
-// Search form element
-const searchForm = document.querySelector('[data-search-form]');
 // Data empty state
 const emptyState = document.querySelector('[data-empty-state]');
 
 // Data Search Input
 const searchInput = document.querySelector('[data-search-input]');
+// Search form element
+const searchForm = document.querySelector('[data-search-form]');
 
 
 // ----->> Helpers
@@ -38,18 +38,27 @@ const themeChanger = () => {
     }
 }
 
-
 // Run theme change when the button is clicked
-
 themeToggle.addEventListener('click', themeChanger);
 
-const searchUser = (e) => {
+// Handle search form submit
+
+const handleSearchSubmit = (e) => {
     e.preventDefault();    
     if(!searchInput.value.trim()) {
        displaySearchError("Please enter a username.");
-    } else {
-        displaySearchError('Hook the API call here..');
+       return
+    }
+    displaySearchError("");
+    // Hook API call here..
+}
+
+// Clear error message when user types
+const handleSearchInput = () => {
+    if(searchInput.value.trim()){
+        displaySearchError("");
     }
 }
 
-searchForm.addEventListener('submit', searchUser);
+searchForm.addEventListener('submit', handleSearchSubmit);
+searchInput.addEventListener('input', handleSearchInput);
