@@ -2,14 +2,10 @@
 
 // Button that toggles the theme
 const themeToggle = document.querySelector('[data-theme-toggle]');
-// Data empty state
-const emptyState = document.querySelector('[data-empty-state]');
-
 // Data Search Input
 const searchInput = document.querySelector('[data-search-input]');
 // Search form element
 const searchForm = document.querySelector('[data-search-form]');
-
 
 // ----->> Helpers
 
@@ -22,6 +18,51 @@ const displaySearchError = (msg = "") => {
    }
    searchErrorElement.textContent = msg;
 }
+
+const setEmptyStateMessage = (message = "") => {
+    // Data empty state
+    const emptyState = document.querySelector('[data-empty-state]');
+    if(!emptyState){
+        return;
+    }
+    emptyState.textContent = message;
+}
+
+// ----->> API Setup
+
+// API URL
+
+const githubGetUser = "https://api.github.com/users/";
+
+const getUserDetails = async (username) => {
+  try{
+    const url = githubGetUser + username;  
+    const response = await fetch(url);
+    if(!response.ok){
+        setEmptyStateMessage("No GitHub user found with your search query.");
+        return;
+    }
+       const data = await response.json();       
+       userDetails(data);
+  }
+  catch(error){
+    console.error(error.message)
+  }
+}
+
+
+// Profile card elements (data-* hooks)
+
+const profileEls = {
+  avatar: document.querySelector('[data-avatar]'),  
+}
+
+
+const userDetails = (data) => {
+  console.log("Data to display in UI:", data);  
+  profileEls.avatar.src = data.avatar_url;
+}
+
 
 // Toggle between light and dark themes
 
@@ -45,18 +86,21 @@ themeToggle.addEventListener('click', themeChanger);
 
 const handleSearchSubmit = (e) => {
     e.preventDefault();    
-    if(!searchInput.value.trim()) {
-       displaySearchError("Please enter a username.");
-       return
+    const username = searchInput.value.trim();    
+    if(!username){
+        displaySearchError("Please enter a username.");
+        return;
+    } else {
+        getUserDetails(username);
+        //emptyState.classList.add('is-hidden');
+        //userCard.classList.remove('card--hidden');
     }
-    displaySearchError("");
-    // Hook API call here..
 }
 
 // Clear error message when user types
-const handleSearchInput = () => {
+const handleSearchInput = () => {    
     if(searchInput.value.trim()){
-        displaySearchError("");
+        displaySearchError("");        
     }
 }
 

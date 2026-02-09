@@ -415,3 +415,7 @@ html[data-theme="light"] .icon--moon { display: block; }
   line-height: 1.5;
   color: var(--muted);
 }
+
+.is-hidden {
+  display: none;
+}
