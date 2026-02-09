@@ -393,6 +393,7 @@ html[data-theme="light"] .icon--moon { display: block; }
   .search__error {
     right: 120px;
   }
+  .search__error.is-visible { visibility: visible; }
 
   .search__input {
     font-size: 13px; /* mobile preset */
