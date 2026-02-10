@@ -419,3 +419,8 @@ html[data-theme="light"] .icon--moon { display: block; }
 .is-hidden {
   display: none;
 }
+
+.search__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

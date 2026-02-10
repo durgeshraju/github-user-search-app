@@ -1,16 +1,9 @@
-// ------>> Global selector references
-
-// Button that toggles the theme
-const themeToggle = document.querySelector('[data-theme-toggle]');
-// Data Search Input
-const searchInput = document.querySelector('[data-search-input]');
-// Search form element
-const searchForm = document.querySelector('[data-search-form]');
+// ------>> Global Helper for selector references
+const getEl = (s) => document.querySelector(s);
 
 // ----->> Helpers
 
 // Data Search Error Message
-
 const displaySearchError = (msg = "") => {
    const searchErrorElement = document.querySelector('[data-search-error]');
    if(!searchErrorElement) {
@@ -19,8 +12,8 @@ const displaySearchError = (msg = "") => {
    searchErrorElement.textContent = msg;
 }
 
-const setEmptyStateMessage = (message = "") => {
-    // Data empty state
+// Data empty state
+const setEmptyStateMessage = (message = "") => {    
     const emptyState = document.querySelector('[data-empty-state]');
     if(!emptyState){
         return;
@@ -28,43 +21,8 @@ const setEmptyStateMessage = (message = "") => {
     emptyState.textContent = message;
 }
 
-// ----->> API Setup
 
-// API URL
-
-const githubGetUser = "https://api.github.com/users/";
-
-const getUserDetails = async (username) => {
-  try{
-    const url = githubGetUser + username;  
-    const response = await fetch(url);
-    if(!response.ok){
-        setEmptyStateMessage("No GitHub user found with your search query.");
-        return;
-    }
-       const data = await response.json();       
-       userDetails(data);
-  }
-  catch(error){
-    console.error(error.message)
-  }
-}
-
-
-// Profile card elements (data-* hooks)
-
-const profileEls = {
-  avatar: document.querySelector('[data-avatar]'),  
-}
-
-
-const userDetails = (data) => {
-  console.log("Data to display in UI:", data);  
-  profileEls.avatar.src = data.avatar_url;
-}
-
-
-// Toggle between light and dark themes
+// Toggle between `light || dark` theme modes
 
 const themeChanger = () => {
    const htmlDataTheme = document.documentElement;
@@ -80,29 +38,107 @@ const themeChanger = () => {
 }
 
 // Run theme change when the button is clicked
-themeToggle.addEventListener('click', themeChanger);
+getEl('[data-theme-toggle]').addEventListener('click', themeChanger);
+
+
+// API data binding helpers in UI
+
+const setText = (element, value ) => {
+    if(!element) return;
+    element.textContent = value;
+}
+
+const setImage = (element, value) => {
+    if(!element) return;
+    element.src = value;
+}
+
+// ----->> API Setup
+
+// API URL
+
+const githubGetUser = "https://api.github.com/users/";
+
+// Data Fetching process handling
+
+const getUserDetails = async (username) => {
+  try{
+    const url = githubGetUser + username;  
+    const response = await fetch(url);
+    if(!response.ok){
+        setEmptyStateMessage("No GitHub user found with your search query.");
+        return;
+    }
+    getEl('[data-search-btn]').setAttribute('disabled', true);
+    getEl('[data-search-btn]').textContent = "loading.."
+       const data = await response.json();
+        setTimeout(() => {
+            userDetails(data);
+            getEl('[data-search-input]').value = '';
+            const card = getEl('.card');
+            if(card) card.classList.toggle("is-hidden");            
+            getEl('[data-search-btn]').removeAttribute('disabled', false);
+            getEl('[data-search-btn]').textContent = "Search";
+    }, 2000);
+  }
+  catch(error){
+    console.error(error.message)
+  }
+}
+
+
+// Profile card elements (data-* hooks)
+
+const profileEls = {
+  avatar: getEl('[data-avatar]'),
+  name: getEl('[data-name]'),
+  tUsername: getEl('[data-username]'),
+  bio: getEl('[data-bio]'),
+  repos: getEl('[data-repos]'),
+  followers: getEl('[data-followers]'),
+  following: getEl('[data-following]'),
+  location: getEl('[data-location]'),
+  twitter: getEl('[data-twitter]'),
+  blogLink: getEl('[data-blog-link]'),
+  company: getEl(['data-company'])
+}
+
+
+// Updating the data in to userDetails card
+
+const userDetails = (data) => {
+  setImage(profileEls.avatar, data.avatar_url);
+  setText(profileEls.name, data.name);
+  setText(profileEls.tUsername, data.twitter_username);
+  setText(profileEls.bio, data.bio);
+  setText(profileEls.repos, data.public_repos);
+  setText(profileEls.followers, data.followers);
+  setText(profileEls.following, data.following);
+  setText(profileEls.location, data.location);
+  setText(profileEls.twitter, data.twitter_username);
+  setText(profileEls.blogLink, data.blog);
+  setText(profileEls.company, data.company);
+}
 
 // Handle search form submit
 
 const handleSearchSubmit = (e) => {
     e.preventDefault();    
-    const username = searchInput.value.trim();    
+    const username = getEl('[data-search-input]').value.trim();    
     if(!username){
         displaySearchError("Please enter a username.");
         return;
     } else {
         getUserDetails(username);
-        //emptyState.classList.add('is-hidden');
-        //userCard.classList.remove('card--hidden');
     }
 }
 
 // Clear error message when user types
-const handleSearchInput = () => {    
-    if(searchInput.value.trim()){
+const handleSearchInput = () => {
+    if(getEl('[data-search-input]').value.trim()){
         displaySearchError("");        
     }
 }
 
-searchForm.addEventListener('submit', handleSearchSubmit);
-searchInput.addEventListener('input', handleSearchInput);
+getEl('[data-search-form]').addEventListener('submit', handleSearchSubmit);
+getEl('[data-search-input]').addEventListener('input', handleSearchInput);
