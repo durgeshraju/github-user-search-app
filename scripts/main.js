@@ -13,7 +13,7 @@ const displaySearchError = (msg = "") => {
 }
 
 // Data empty state
-const setEmptyStateMessage = (message = "") => {    
+const setEmptyStateMessage = (message = "") => {
     const emptyState = document.querySelector('[data-empty-state]');
     if(!emptyState){
         return;
@@ -66,17 +66,19 @@ const getUserDetails = async (username) => {
     const url = githubGetUser + username;  
     const response = await fetch(url);
     if(!response.ok){
+        const card = getEl('.card');
+        if(card) card.classList.add('is-hidden');
         setEmptyStateMessage("No GitHub user found with your search query.");
         return;
     }
     getEl('[data-search-btn]').setAttribute('disabled', true);
     getEl('[data-search-btn]').textContent = "loading.."
        const data = await response.json();
-        setTimeout(() => {
+        setTimeout(() => {            
             userDetails(data);
             getEl('[data-search-input]').value = '';
             const card = getEl('.card');
-            if(card) card.classList.toggle("is-hidden");            
+            if(card) card.classList.remove('is-hidden');
             getEl('[data-search-btn]').removeAttribute('disabled', false);
             getEl('[data-search-btn]').textContent = "Search";
     }, 2000);
