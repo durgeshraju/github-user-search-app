@@ -102,7 +102,7 @@ const profileEls = {
   location: getEl('[data-location]'),
   twitter: getEl('[data-twitter]'),
   blogLink: getEl('[data-blog-link]'),
-  company: getEl(['data-company'])
+  company: getEl('[data-company]')
 }
 
 
