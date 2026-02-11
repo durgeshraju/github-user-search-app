@@ -81,8 +81,7 @@ const getUserDetails = async (username) => {
             userDetails(data);
             getEl('[data-search-input]').value = '';
             const card = getEl('.card');
-            if(card) card.classList.remove('is-hidden');
-            debugger
+            if(card) card.classList.remove('is-hidden');            
             getEl('[data-search-btn]').removeAttribute('disabled');
             getEl('[data-search-btn]').textContent = "Search";
     }, 2000);
