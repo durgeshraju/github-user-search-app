@@ -38,8 +38,8 @@ const themeChanger = () => {
 }
 
 // Run theme change when the button is clicked
-getEl('[data-theme-toggle]').addEventListener('click', themeChanger);
-
+const themeBtn = getEl('[data-theme-toggle]');
+if(themeBtn) themeBtn.addEventListener('click', themeChanger);
 
 // API data binding helpers in UI
 
@@ -71,15 +71,19 @@ const getUserDetails = async (username) => {
         setEmptyStateMessage("No GitHub user found with your search query.");
         return;
     }
-    getEl('[data-search-btn]').setAttribute('disabled', true);
-    getEl('[data-search-btn]').textContent = "loading.."
+      const searchBtn = getEl('[data-search-btn]');
+ 
+        searchBtn.setAttribute('disabled', true);
+        searchBtn.textContent = "loading..";
+
        const data = await response.json();
         setTimeout(() => {            
             userDetails(data);
             getEl('[data-search-input]').value = '';
             const card = getEl('.card');
             if(card) card.classList.remove('is-hidden');
-            getEl('[data-search-btn]').removeAttribute('disabled', false);
+            debugger
+            getEl('[data-search-btn]').removeAttribute('disabled');
             getEl('[data-search-btn]').textContent = "Search";
     }, 2000);
   }
